@@ -21,11 +21,11 @@ Clone this repo to your bundle.
 You can run a single test at a time. Output matches the results of:
 
 
-   python manage.py test appname.TestCase.test_function_name
+    python manage.py test appname.TestCase.test_function_name
 
 You can run tests for an entire application at a time. Matches the result of:
 
-   python manage.py test appname
+    python manage.py test appname
 
 ## How to use
 Put your cursor inside your test file on or inside a test function you would like to run.
@@ -37,27 +37,27 @@ suite for the whole app will run instead.
 
 ## Configuration Options
 
-tmux_djangotest_manage_py (default="python manage.py")
+tmux_djangotest_manage_py (`default="python manage.py"`)
 Command you use to run the manage.py file. Use this in combination with
 `tmux_djangotest_file_prefix` to set up your Python/Virtualenv
  
     let g:tmux_djangotest_manage_py="python manage.py"
 
-tmux_djangotest_test_cmd (default="test")
+tmux_djangotest_test_cmd (`default="test"`)
 The command you want manage.py to run. 
 I default to test, but you may use whatever you want
 
     let g:tmux_djangotest_test_cmd="test"
 
-tmux_djangotest_test_file_contains (default="unittest")
+tmux_djangotest_test_file_contains (`default="unittest"`)
 The script checks for this word `unittest` in your test file. If you never
 use the word `unittest` in your test files, put another word here that
 is used instead.
 
     let g:tmux_djangotest_test_file_contains="unittest"
 
-tmux_djangotest_file_prefix (default="")
-Used alongside the tmux_djangotest_manage_py to set up the virtualenv. Note that
+tmux_djangotest_file_prefix (`default=""`)
+Used alongside `tmux_djangotest_manage_py` to set up the virtualenv. Note that
 an example is `source ../bin/activate &&`. Note that it must have a `&&` following it.
 
     let g:tmux_djangotest_file_prefix=""
