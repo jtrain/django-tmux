@@ -15,7 +15,7 @@ if !exists("g:tmux_djangotest_test_file_contains")
 endif
 
 if !exists("g:tmux_djangotest_file_prefix")
-    let g:tmux_djangotest_file_prefix="source ../bin/activate && "
+    let g:tmux_djangotest_file_prefix=""
 endif
 
 if !exists("g:tmux_djangotest_tmux_cmd")
@@ -124,5 +124,3 @@ def tmux(command):
     vim.command('call {tmux_command}("clear && {command}")'.format(**locals()))
 
 endpython
-
-noremap <C-b> :python run_django_test()<CR>
