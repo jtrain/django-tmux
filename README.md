@@ -27,6 +27,14 @@ You can run tests for an entire application at a time. Matches the result of:
 
    python manage.py test appname
 
+## How to use
+Put your cursor inside your test file on or inside a test function you would like to run.
+Then hit the shortcut key (defined below) for run test. It will identify the test function
+and the appname will be found.
+
+Or put your cursor outside of a test function (like in setUp or a helper function). The test
+suite for the whole app will run instead.
+
 ## Configuration Options
 
 tmux_djangotest_manage_py (default="python manage.py")
@@ -61,7 +69,7 @@ tmux handler for what they use to send commands.
 
     let g:tmux_djangotest_tmux_cmd="screen#ScreenShell"
 
-## Settings I use for Screen
+## Shortcuts and settings I use for Screen
 
     " settings for screen-tmux
     let g:ScreenImpl = "Tmux"
@@ -72,3 +80,5 @@ tmux handler for what they use to send commands.
     " quits a spawned tmux from within vim
     map <Leader>q :ScreenQuit<CR>
 
+    " shortcut to run test on Ctrl+b
+    noremap <C-b> :python run_django_test()<CR>
