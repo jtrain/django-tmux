@@ -10,8 +10,8 @@ if !exists("g:tmux_djangotest_test_cmd")
     let g:tmux_djangotest_test_cmd="test"
 endif
 
-if !exists("g:tmux_djangotest_test_file_contains")
-    let g:tmux_djangotest_test_file_contains="unittest"
+if !exists("g:tmux_djangotest_test_file_name_prefix")
+    let g:tmux_djangotest_test_file_name_prefix="test"
 endif
 
 if !exists("g:tmux_djangotest_file_prefix")
@@ -26,25 +26,34 @@ python << endpython
 import re
 import os
 import vim
+import ast
 
 def is_test_file(fname):
-    fd = open(fname, 'r')
-    try:
-        contents = fd.read()
-        contains = vim.eval("g:tmux_djangotest_test_file_contains")
-        return contains in contents
-    finally:
-        fd.close()
+    return os.path.basename(fname).startswith(vim.eval("g:tmux_djangotest_test_file_name_prefix"))
 
 def find_appname(fname):
     """
     Look at the parent directory, if that directory isn't tests, then we
     will say it's our appname.
+
+    then we look in __init__.py for the default_app_config setting
     """
     path = os.path.dirname(fname)
+    prefix = ''
     if path.endswith('tests'):
         path = os.path.dirname(path)
-    return os.path.basename(path)
+
+    init_file = open(os.path.join(path, '__init__.py'), 'r')
+    for line in init_file:
+        if line.startswith('default_app_config'):
+            try:
+                appconfig = ast.parse(line).body[0].value.s
+            except (IndexError, AttributeError):
+                return os.path.basename(path)
+
+            prefix = appconfig.rpartition('.apps.')[0] + '.'
+
+    return prefix + os.path.basename(fname).strip('.py')
 
 def get_test_name():
     """
@@ -91,7 +100,7 @@ def run_django_test():
     fname = cb.name
 
     if not is_test_file(fname):
-        print "not a test file. looked for unittest and not found."
+        print "not a test file. file name doesn't begin with " + vim.eval("g:tmux_djangotest_test_file_name_prefix")
         return
 
     # is it a specific test?
