@@ -53,7 +53,7 @@ def find_appname(fname):
 
             prefix = appconfig.rpartition('.apps.')[0] + '.'
 
-    return prefix + os.path.basename(fname).strip('.py')
+    return prefix + os.path.basename(fname).replace('.py', '')
 
 def get_test_name():
     """
@@ -89,9 +89,9 @@ def run_django_test():
     or
 
     # if the cursor is on a test_* function def.
-    ./manage.py test appname.TestClass.test_name 
+    ./manage.py test appname.TestClass.test_name
 
-    where appname is the test's containing folder. 
+    where appname is the test's containing folder.
 
     check if a particular test is under the cursor and run that.
     """
