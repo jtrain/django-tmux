@@ -134,14 +134,14 @@ def run_django_test():
 
     if testname and classname:
         # a single test to run.
-        extra = ".{classname}.{testname}".format({
+        extra = ".{classname}.{testname}".format(**{
             'classname': classname, 'testname': testname
         })
     else:
         extra = ""
 
     # now send the command to tmux
-    command = "{prefix}{manage_cmd} {test_cmd} {appname}{extra}".format({
+    command = "{prefix}{manage_cmd} {test_cmd} {appname}{extra}".format(**{
         'prefix': prefix, 'manage_cmd': manage_cmd, 'test_cmd': test_cmd,
         'appname': appname, 'extra': extra
     })
@@ -151,7 +151,7 @@ def run_django_test():
 
 def tmux(command):
     tmux_command = vim.eval("tmux_djangotest_tmux_cmd")
-    vim.command('call {tmux_command}("clear && {command}")'.format({
+    vim.command('call {tmux_command}("clear && {command}")'.format(**{
         'tmux_command': tmux_command, 'command': command
     }))
 endpython
