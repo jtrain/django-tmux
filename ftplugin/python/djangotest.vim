@@ -153,6 +153,5 @@ def tmux(command):
     tmux_command = vim.eval("tmux_djangotest_tmux_cmd")
     vim.command('call {tmux_command}("clear && {command}")'.format({
         'tmux_command': tmux_command, 'command': command
-    })
-
+    }))
 endpython
