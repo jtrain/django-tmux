@@ -1,4 +1,4 @@
-if !has('python') || !has('python3')
+if !(has('python') || has('python3'))
     finish
 endif
 
@@ -21,7 +21,7 @@ endif
 if !exists("g:tmux_djangotest_tmux_cmd")
     let g:tmux_djangotest_tmux_cmd="screen#ScreenShell"
 endif
-python << endpython
+Python2or3 << endpython
 
 import re
 import os
