@@ -2,9 +2,11 @@
 
 Run your django tests in a tmux session directly from vim.
 
-inspired by the work [vimux](https://github.com/benmills/vimux) et al have been doing with rails based tests.
+Inspired by the work [vimux](https://github.com/benmills/vimux) et al have been doing with rails based tests.
 
 ## Installation
+
+Requires vim with `+python` or `+python3` (check using `vim --version`)
 
 Install [pathogen](https://github.com/tpope/vim-pathogen) (skip if you already have pathogen)
 
@@ -81,4 +83,5 @@ tmux handler for what they use to send commands.
     map <Leader>q :ScreenQuit<CR>
 
     " shortcut to run test on Ctrl+b
-    noremap <C-b> :python run_django_test()<CR>
+    " or use :python if your vim is configured for that.
+    noremap <C-b> :python3 run_django_test()<CR>

@@ -1,4 +1,4 @@
-if !has('python')
+if !has('python') || !has('python3')
     finish
 endif
 
@@ -28,8 +28,12 @@ import os
 import vim
 import ast
 
+
 def is_test_file(fname):
-    return os.path.basename(fname).startswith(vim.eval("g:tmux_djangotest_test_file_name_prefix"))
+    return os.path.basename(fname).startswith(
+        vim.eval("g:tmux_djangotest_test_file_name_prefix")
+    )
+
 
 def find_appname(fname):
     """
@@ -42,6 +46,9 @@ def find_appname(fname):
     prefix = ''
     if path.endswith('tests'):
         path = os.path.dirname(path)
+    else:
+        # default if there is no 'default_app_config' set.
+        prefix = os.path.basename(path)
 
     init_file = open(os.path.join(path, '__init__.py'), 'r')
     for line in init_file:
@@ -55,14 +62,17 @@ def find_appname(fname):
 
     return prefix + os.path.basename(fname).replace('.py', '')
 
+
 def get_test_name():
     """
     Finds the test name for the django test under the cursor..
     """
     return match_in_current_buffer('def (test_[\_\w]+)')
 
+
 def get_class_name():
     return match_in_current_buffer('^class ([\_\w]+)')
+
 
 def match_in_current_buffer(regex_str):
     cb = vim.current.window.buffer
@@ -100,7 +110,8 @@ def run_django_test():
     fname = cb.name
 
     if not is_test_file(fname):
-        print "not a test file. file name doesn't begin with " + vim.eval("g:tmux_djangotest_test_file_name_prefix")
+        print("not a test file. file name doesn't begin with %s" %
+              vim.eval("g:tmux_djangotest_test_file_name_prefix"))
         return
 
     # is it a specific test?
@@ -118,18 +129,25 @@ def run_django_test():
 
     if testname and classname:
         # a single test to run.
-        extra = ".{classname}.{testname}".format(**locals())
+        extra = ".{classname}.{testname}".format({
+            'classname': classname, 'testname': testname
+        })
     else:
         extra = ""
 
     # now send the command to tmux
-    command = "{prefix}{manage_cmd} {test_cmd} {appname}{extra}".format(**locals())
+    command = "{prefix}{manage_cmd} {test_cmd} {appname}{extra}".format({
+        'prefix': prefix, 'manage_cmd': manage_cmd, 'test_cmd': test_cmd,
+        'appname': appname, 'extra': extra
+    })
 
-    print command
+    print(command)
     tmux(command)
 
 def tmux(command):
     tmux_command = vim.eval("tmux_djangotest_tmux_cmd")
-    vim.command('call {tmux_command}("clear && {command}")'.format(**locals()))
+    vim.command('call {tmux_command}("clear && {command}")'.format({
+        'tmux_command': tmux_command, 'command': command
+    })
 
 endpython
