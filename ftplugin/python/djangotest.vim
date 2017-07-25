@@ -1,6 +1,11 @@
 if !(has('python') || has('python3'))
     finish
 endif
+if has('python3')
+    command! -nargs=1 Python2or3 python3 <args>
+else
+    command! -nargs=1 Python2or3 python <args>
+endif
 
 if !exists("g:tmux_djangotest_manage_py")
     let g:tmux_djangotest_manage_py="python manage.py"
