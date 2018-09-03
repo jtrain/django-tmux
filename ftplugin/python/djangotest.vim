@@ -49,23 +49,42 @@ def find_appname(fname):
     """
     path = os.path.dirname(fname)
     prefix = ''
-    if path.endswith('tests'):
-        path = os.path.dirname(path)
-    else:
-        # default if there is no 'default_app_config' set.
-        prefix = os.path.basename(path)
+    appname = None
 
-    init_file = open(os.path.join(path, '__init__.py'), 'r')
-    for line in init_file:
+    for path in walk_up(path):
+        appname = get_default_app_config(path)
+        if appname is not None:
+            relative = os.path.relpath(
+                fname, appname.replace('.', os.path.sep)
+            )
+            return os.path.join(
+                appname.replace('.', os.path.sep),
+                relative
+            ).replace(os.path.sep, '.').replace('.py', '')
+
+    return os.path.basname(fname).replace('.py', '')
+
+
+def walk_up(path):
+    while path:
+        yield path
+        path = os.path.dirname(path)
+
+
+def get_default_app_config(path):
+    try:
+        f = open(os.path.join(path, '__init__.py'), 'r')
+    except OSError:
+        return None
+
+    for line in f:
         if line.startswith('default_app_config'):
             try:
                 appconfig = ast.parse(line).body[0].value.s
             except (IndexError, AttributeError):
-                return os.path.basename(path)
+                continue
 
-            prefix = appconfig.rpartition('.apps.')[0] + '.'
-
-    return prefix + os.path.basename(fname).replace('.py', '')
+            return appconfig.rpartition('.apps.')[0]
 
 
 def get_test_name():
