@@ -64,7 +64,7 @@ an example is `source ../bin/activate &&`. Note that it must have a `&&` followi
 
     let g:tmux_djangotest_file_prefix=""
 
-tmux_djangotest_tmux_cmd (default="screen#ScreenShell")
+`tmux_djangotest_tmux_cmd (default="screen#ScreenShell")`
 The function you use to send commands to tmux from vim. If you use the suggested screen.vim
 project then you are good to go here. Otherwise you will have to look up the specifics of your
 tmux handler for what they use to send commands.

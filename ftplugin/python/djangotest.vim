@@ -39,20 +39,17 @@ def is_test_file(fname):
         vim.eval("g:tmux_djangotest_test_file_name_prefix")
     )
 
-
 def find_appname(fname):
     """
     Look at the parent directory, if that directory isn't tests, then we
     will say it's our appname.
 
-    then we look in __init__.py for the default_app_config setting
+    Then, we look in apps.py for the AppConfig subclass
     """
     path = os.path.dirname(fname)
-    prefix = ''
-    appname = None
 
     for path in walk_up(path):
-        appname = get_default_app_config(path)
+        appname = get_app_name_from_apps_module(path)
         if appname is not None:
             relative = os.path.relpath(
                 fname, appname.replace('.', os.path.sep)
@@ -62,29 +59,31 @@ def find_appname(fname):
                 relative
             ).replace(os.path.sep, '.').replace('.py', '')
 
-    return os.path.basname(fname).replace('.py', '')
-
+    return os.path.basename(fname).replace('.py', '')
 
 def walk_up(path):
     while path:
         yield path
+        if 'manage.py' in os.listdir(path):
+            break
         path = os.path.dirname(path)
 
 
-def get_default_app_config(path):
+def get_app_name_from_apps_module(path):
     try:
-        f = open(os.path.join(path, '__init__.py'), 'r')
-    except OSError:
+        with open(os.path.join(path, 'apps.py')) as f:
+            content = f.read()
+            module = ast.parse(content)
+            for node in module.body:
+                if isinstance(node, ast.ClassDef):
+                    for base in node.bases:
+                        if "AppConfig" in ast.dump(base):
+                            # Assuming the name attribute of AppConfig contains the name of the app
+                            for attr in node.body:
+                                if isinstance(attr, ast.Assign) and attr.targets[0].id == "name":
+                                    return attr.value.s
+    except (OSError, AttributeError):
         return None
-
-    for line in f:
-        if line.startswith('default_app_config'):
-            try:
-                appconfig = ast.parse(line).body[0].value.s
-            except (IndexError, AttributeError):
-                continue
-
-            return appconfig.rpartition('.apps.')[0]
 
 
 def get_test_name():
